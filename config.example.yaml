@@ -1,0 +1,98 @@
+# 文件简介：配置模板。复制成 config.yaml 再按自家情况改；config.yaml 不进仓库（含密钥与本地路径）。
+# 规则数字（价格/时段/时长上限/窗口/条数/发布日偏移）在 rules.yaml，不在这里。
+
+# ---------- 路径 ----------
+blogger_docx: "C:\\path\\to\\jb.docx"        # 博主清单：每段一行【中文名】+ 频道链接
+cookie_file: "cookies.json"                   # 后台登录态（浏览器 hook 导出）
+cover_dir: "C:\\path\\to\\封面"               # 封面截图目录，按【中文名】命名
+srt_dir: "work\\dl"                           # 字幕下载目录
+state_file: "state.json"                       # 去重与重试状态
+work_dir: "work"                               # 清洗后的临时 srt
+log_dir: "logs"
+
+# ---------- 扫描与限额 ----------
+video_limit_per_channel: 15     # 每个频道抓最近几条
+max_videos_per_channel: 3       # 每个博主每轮最多取几条
+max_videos_per_run: 999         # 单轮最多处理几条（999 = 不设上限）
+window_hour: 21                 # 窗口日界线：昨天 21:00 ~ 今天 21:00
+log_keep_days: 30
+min_balance: 100                # 余额低于这个数就停
+ai_timeout: 1500                # 等平台 AI 出稿的超时（秒）
+clean_srt: true                 # 清洗 srt（会改变 md5，等于重新计费）
+
+# ---------- 标题 ----------
+# 默认直接传原文，平台自己会翻成中文（实测 35/35）。想自己翻把 use_google 打开即可。
+translate:
+  max_chars: 34
+  use_google: false
+  google_retries: 3
+  google_backoff: 2.0
+
+# ---------- 重试窗口 ----------
+waiting_retry_days: 20
+waiting_retry_max: 40
+hold_max_days: 3
+live_retry_days: 3
+
+# ---------- 本机模型网关链 ----------
+# 章节筛选 / 星座正名 / 标题排序共用；按顺序试，一个失败换下一个，全失败各自降级。
+llm:
+  base: "http://127.0.0.1:3425/v1"     # 任意兼容 Chat Completions 协议的网关；留空用这个默认值
+  key_env: "LLM_GATEWAY_KEY"        # key 的环境变量名；也支持从 ~/.config/llm-gateway/.env 读
+  key_file: ""
+  max_tokens: 4000
+  timeout: 60
+  providers:
+    - name: "gateway-a"
+      model: "local/model-a"
+    - name: "gateway-b"
+      model: "local/model-b"
+    - name: "gateway-c"
+      model: "local/model-c"
+
+# ---------- 章节名 AI 正名 ----------
+# 只把"章节名"发给模型认星座，时间戳始终由本地解析；失败就退回 hold。
+chapterai:
+  enabled: true
+  timeout: 20
+
+# ---------- 开跑前自检 ----------
+# 用现有 cookie 请求一条已知视频，登录失效就推IM 机器人提醒（只提醒，不自动修）。
+preflight:
+  enabled: true
+  cookie_video_ids:
+    - h9DKbYWRluw
+    - 2ejKR1NPI-E
+
+# ---------- 代理 ----------
+proxy: ""                        # 留空自动探测 7890/7897
+proxy_auto_stop: true            # 提交完自动关代理，下次开跑再拉起
+clash_exe: "C:\\path\\to\\clash.meta.exe"
+clash_home: "C:\\path\\to\\clash.meta.auto"
+
+# ---------- 其它 ----------
+series_match_by_prefix: true
+concurrency:
+  scan_workers: 4
+  detail_workers: 4
+  submit_workers: 1
+  submit_interval: 25
+  submit_retries: 3
+  submit_backoff: 60
+  wait_workers: 8
+  publish_workers: 3
+youtube:
+  cookies_file: "data\\yt-cookies.txt"
+  js_runtime_dir: ""             # 放了 deno.exe 的目录，用于解 JS 挑战
+
+# ---------- 日报推送 ----------
+report:
+  push: false                    # true 且 targets 非空才推
+  detail_lines: 5
+  balance_warn: 600              # 余额低于这个数就在日报里标 ⚠ 偏低
+  run_cost_hint: 450             # 每轮大约花多少币，用来算"还能撑几轮"
+  targets:
+    - type: im                # IM 群机器人
+      url: "https://hooks.example.com/notify?token=YOUR_TOKEN"
+  # - type: webhook
+  #   url: ""

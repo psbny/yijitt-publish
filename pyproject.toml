@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tarot-pipeline"
+version = "0.1.0"
+description = "把 YouTube 塔罗/占星频道的更新，自动整理成内容平台后台的文章（字幕、封面、时间戳、排期）"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Yijitt" }]
+keywords = ["youtube", "tarot", "automation", "cli"]
+dependencies = [
+    "requests>=2.31",
+    "PyYAML>=6.0",
+    "yt-dlp>=2025.1.1",
+    "python-docx>=1.1",
+    "tzdata>=2024.1",
+]
+
+[project.scripts]
+tarot-pipeline = "tarot_pipeline.cli:main"
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

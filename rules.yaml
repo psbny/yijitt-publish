@@ -1,0 +1,53 @@
+# 文件简介：全项目「可调参数」的唯一来源——价格、排期时段、时长上限、窗口、每博主条数都在这里；
+# 想改规则先改这个文件，代码（lib/schedule.py、lib/core.py、pipeline.py）只读不算。
+# 人读的规则说明在 RULES.md，两者分工：RULES.md 讲为什么，这里只放数字。
+
+# 价格，单位：分（29 = 0.29 元）。用户 m01172：能量 0.29 / 选组 0.59 / 全星座 0.79
+price:
+  energy: 29
+  pick: 59
+  all_signs: 79
+
+# 排期时段（Asia/Shanghai）
+schedule:
+  ep_hours: [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+  as_hours: [9, 14, 21, 16, 19]     # 全星座优先时段，顺序即优先级
+  ep_start_minute: 5                # 能量/选组第一轮 :05
+  as_start_minute: 15               # 全星座第一轮 :15
+  minute_step: 5                    # 排满一轮后整体 +5 分钟
+
+# 时长上限，单位：分钟。超过就不更新（性价比太低）
+duration_limit_minutes:
+  energy: 30                        # 用户 m04708：40 -> 30 分钟
+  all_signs: 240
+
+# 时长下限，单位：分钟。短于这个不更新（像音乐混剪/短片）
+# 用户 m04708：以后就按 8 分钟
+min_duration_minutes: 8
+
+# 「观众付费解读」类直播回放的标题关键词（命中就跳过）。
+# 用户 m05021：这类直播是按问题/看盘收费的观众答疑，对我们受众没价值，不再更新。
+# 例：【Anastasia】LIVE Birth Chart Readings…、【Edgar】$22.22 PER QUESTION
+paid_live_patterns:
+  - "birth\\s*chart\\s*read"
+  - "per\\s+question"
+  - "live\\s+readings?"
+
+# 「观众互动」类视频的标题关键词（命中就跳过）。
+# 用户 m05854：博主现场给观众/听众做解读这一类的不要了（例 Evan 的
+# "Astrologer Reads Audience Members Based on Their Big 3…"、
+# "We Did Live Astrology Readings During an Eclipse…"）。
+viewer_interaction_patterns:
+  - "reads?\\s+(the\\s+)?(audience|viewers?|subscribers?)"
+  - "audience\\s+(members?|readings?|questions?)"
+  - "readings?\\s+(for|with)\\s+(the\\s+)?(audience|viewers?|subscribers?)"
+  - "live\\s+(astrology|tarot|card|oracle)\\s+readings?"
+
+# 发布日 = 更新日的次日（用户 m01172：11/4 更新 -> 11/5 发布）
+days_ahead: 1
+
+# 时间窗口的日界线：每次跑「昨天 21:00 ~ 今天 21:00」
+window_hour: 21
+
+# 每个博主一次最多取几条视频（按标题精彩度排序后取前 N）
+max_videos_per_channel: 3

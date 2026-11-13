@@ -1,0 +1,10 @@
+# 运行依赖：pip install -e .  会自动装这些；也可以 pip install -r requirements.txt
+requests>=2.31
+PyYAML>=6.0
+yt-dlp>=2025.1.1
+python-docx>=1.1
+tzdata>=2024.1
+
+# 想用 `pip install -e .` 安装成本地命令，还需要构建工具（离网环境请先装好）：
+# setuptools>=68
+# wheel

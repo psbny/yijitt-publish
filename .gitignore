@@ -1,0 +1,21 @@
+# 运行时数据、密钥、机器本地路径，一律不进仓库
+config.yaml
+cookies.json
+state.json
+state.bak*.json
+data/
+logs/
+work/
+封面/
+backup/
+*.log
+__pycache__/
+*.py[cod]
+.venv/
+.venv.bak/
+.pytest_cache/
+*.egg-info/
+build/
+dist/
+ALERT.md
+PAUSE
